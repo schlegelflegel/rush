@@ -117,9 +117,12 @@ function Board(desc) {
     }
 
     // compute some stuff
-    this.primaryRow = 0;
+    this.primaryPos = 0;
     if (this.pieces.length !== 0) {
-        this.primaryRow = Math.floor(this.pieces[0].position / this.size);
+        const piece = this.pieces[0];
+        this.primaryPos = piece.stride > 1
+            ? piece.position % this.size
+            : Math.floor(piece.position / this.size);
     }
 }
 
@@ -140,7 +143,9 @@ Board.prototype.isSolved = function() {
         return false;
     }
     var piece = this.pieces[0];
-    var x = Math.floor(piece.position % this.size);
+    var x = piece.stride > 1
+        ? Math.floor(piece.position / this.size)
+        : piece.position % this.size;
     return x + piece.size === this.size;
 }
 
@@ -413,23 +418,11 @@ View.prototype.draw = function() {
     p5.scale(scale);
     p5.translate(-size / 2, -size / 2);
 
-    // exit
-    var ex = size;
-    var ey = board.primaryRow + 0.5;
-    var es = 0.1;
-    p5.fill(this.gridLineColor);
-    p5.noStroke();
-    p5.beginShape();
-    p5.vertex(ex, ey + es);
-    p5.vertex(ex, ey - es);
-    p5.vertex(ex + es, ey);
-    p5.endShape(p5.CLOSE);
-
     // board
     p5.fill(this.boardColor);
     if (board.isSolved()) {
         if (Date.now() % 500 < 250) {
-            p5.fill("#FFFFFF");
+            p5.fill("#CCFFCC");
         }
     }
     p5.stroke(this.gridLineColor);
@@ -485,6 +478,31 @@ View.prototype.draw = function() {
             p5.fill(this.pieceColor);
         }
         piece.draw(p5, size);
+    }
+
+    // exit
+    if (board.pieces[0].stride === 1) {
+        var ex = size;
+        var ey = board.primaryPos + 0.5;
+        var es = 0.1;
+        p5.fill(this.gridLineColor);
+        p5.noStroke();
+        p5.beginShape();
+        p5.vertex(ex - es / 2, ey + es);
+        p5.vertex(ex - es / 2, ey - es);
+        p5.vertex(ex + es / 2, ey);
+        p5.endShape(p5.CLOSE);
+    } else {
+        var ex = board.primaryPos + 0.5;
+        var ey = size;
+        var es = 0.1;
+        p5.fill(this.gridLineColor);
+        p5.noStroke();
+        p5.beginShape();
+        p5.vertex(ex + es, ey - es / 2);
+        p5.vertex(ex - es, ey - es / 2);
+        p5.vertex(ex, ey + es / 2);
+        p5.endShape(p5.CLOSE);
     }
 
     // dragging
