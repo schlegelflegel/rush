@@ -4,11 +4,12 @@ var UnusableHeight = 72 + 24 * 3;
 
 // Piece
 
-function Piece(position, size, stride) {
+function Piece(position, size, stride, type="trigger") {
     this.position = position;
     this.size = size;
     this.stride = stride;
     this.fixed = size === 1;
+    this.type = type;
 }
 
 Piece.prototype.move = function(steps) {
@@ -213,10 +214,12 @@ function View() {
     this.undoStack = [];
 
     this.backgroundColor   = "#FFFFFF";
-    this.boardColor        = "#F2EACD";
+    this.boardColor        = "#FFFFFF";
     this.gridLineColor     = "#222222";
-    this.primaryPieceColor = "#CC3333";
-    this.pieceColor        = "#338899";
+    this.primaryPieceColor = "#FF4444";
+    this.pieceColor        = "#FFFF88";
+    this.cellPieceColor    = "#444444";
+    this.fillerPieceColor  = "#888888";
     this.pieceOutlineColor = "#222222";
     this.wallColor         = "#222222";
     this.wallBoltColor     = "#AAAAAA";
@@ -474,6 +477,10 @@ View.prototype.draw = function() {
         }
         if (i === 0) {
             p5.fill(this.primaryPieceColor);
+        } else if (piece.type === "cell") {
+            p5.fill(this.cellPieceColor);
+        } else if (piece.type === "filler") {
+            p5.fill(this.fillerPieceColor);
         } else {
             p5.fill(this.pieceColor);
         }
@@ -489,6 +496,10 @@ View.prototype.draw = function() {
         var steps = Math.round(offset);
         if (this.dragPiece === 0) {
             p5.fill(this.primaryPieceColor);
+        } else if (piece.type === "cell") {
+            p5.fill(this.cellPieceColor);
+        } else if (piece.type === "filler") {
+            p5.fill(this.fillerPieceColor);
         } else {
             p5.fill(this.pieceColor);
         }
@@ -524,6 +535,119 @@ var sketch = function(p) {
 
 new p5(sketch, 'view');
 
+
+const andBoard = () => {
+    const board = new Board("o");
+    board.size = 9;
+    const h = 1;
+    const v = board.size;
+
+    board.addPiece(new Piece(4, 2, v));
+
+    board.addPiece(new Piece(9, 2, h, "cell"));
+    board.addPiece(new Piece(11, 2, h, "cell"));
+    board.addPiece(new Piece(14, 2, h, "cell"));
+    board.addPiece(new Piece(7, 2, v, "cell"));
+    board.addPiece(new Piece(25, 2, v, "cell"));
+    board.addPiece(new Piece(43, 3, v, "cell"));
+    board.addPiece(new Piece(65, 2, h, "cell"));
+    board.addPiece(new Piece(68, 2, h, "cell"));
+    board.addPiece(new Piece(70, 2, h, "cell"));
+    board.addPiece(new Piece(19, 2, v, "cell"));
+    board.addPiece(new Piece(46, 2, v, "cell"));
+    board.addPiece(new Piece(64, 2, v, "cell"));
+
+    board.addPiece(new Piece(24, 3, v, "filler"));
+    board.addPiece(new Piece(51, 2, v, "filler"));
+    board.addPiece(new Piece(31, 2, h, "filler"));
+    board.addPiece(new Piece(40, 2, h, "filler"));
+    board.addPiece(new Piece(56, 2, h, "filler"));
+
+    board.addPiece(new Piece(49, 3, v, "trigger"));
+    board.addPiece(new Piece(47, 2, h, "trigger"));
+    board.addPiece(new Piece(21, 3, v, "trigger"));
+    board.addPiece(new Piece(20, 2, v, "trigger"));
+    board.addPiece(new Piece(37, 2, h, "trigger"));
+    board.addPiece(new Piece(22, 2, h, "trigger"));
+
+    return board;
+}
+
+const orBoard = () => {
+    const board = new Board("o");
+    board.size = 9;
+    const h = 1;
+    const v = board.size;
+
+    board.addPiece(new Piece(4, 2, v));
+
+    board.addPiece(new Piece(9, 2, h, "cell"));
+    board.addPiece(new Piece(11, 2, h, "cell"));
+    board.addPiece(new Piece(14, 2, h, "cell"));
+    board.addPiece(new Piece(7, 2, v, "cell"));
+    board.addPiece(new Piece(25, 2, v, "cell"));
+    board.addPiece(new Piece(52, 2, v, "cell"));
+    board.addPiece(new Piece(65, 3, h, "cell"));
+    board.addPiece(new Piece(68, 2, h, "cell"));
+    board.addPiece(new Piece(70, 2, h, "cell"));
+    board.addPiece(new Piece(19, 2, v, "cell"));
+    board.addPiece(new Piece(46, 2, v, "cell"));
+    board.addPiece(new Piece(64, 2, v, "cell"));
+
+    board.addPiece(new Piece(41, 3, v, "filler"));
+    board.addPiece(new Piece(51, 2, v, "filler"));
+    board.addPiece(new Piece(39, 3, v, "filler"));
+    board.addPiece(new Piece(47, 2, v, "filler"));
+    board.addPiece(new Piece(30, 3, h, "filler"));
+
+    board.addPiece(new Piece(20, 2, v, "trigger"));
+    board.addPiece(new Piece(37, 2, h, "trigger"));
+    board.addPiece(new Piece(24, 2, v, "trigger"));
+    board.addPiece(new Piece(42, 2, h, "trigger"));
+    board.addPiece(new Piece(22, 2, h, "trigger"));
+
+    return board;
+}
+
+const finalBoard = () => {
+    const board = new Board("o");
+    board.size = 9;
+    const h = 1;
+    const v = board.size;
+
+    board.addPiece(new Piece(18, 2, v));
+
+    board.addPiece(new Piece(9, 2, h, "cell"));
+    board.addPiece(new Piece(11, 2, h, "cell"));
+    board.addPiece(new Piece(13, 3, h, "cell"));
+    board.addPiece(new Piece(7, 2, v, "cell"));
+    board.addPiece(new Piece(25, 2, v, "cell"));
+    board.addPiece(new Piece(52, 2, v, "cell"));
+    board.addPiece(new Piece(65, 2, h, "cell"));
+    board.addPiece(new Piece(68, 2, h, "cell"));
+    board.addPiece(new Piece(70, 2, h, "cell"));
+    board.addPiece(new Piece(19, 2, v, "cell"));
+    board.addPiece(new Piece(46, 2, v, "cell"));
+    board.addPiece(new Piece(64, 2, v, "cell"));
+
+    board.addPiece(new Piece(20, 3, h, "filler"));
+    board.addPiece(new Piece(23, 2, h, "filler"));
+    board.addPiece(new Piece(30, 2, v, "filler"));
+    board.addPiece(new Piece(31, 2, v, "filler"));
+    board.addPiece(new Piece(51, 2, v, "filler"));
+
+    board.addPiece(new Piece(36, 2, h, "trigger"));
+    board.addPiece(new Piece(29, 2, v, "trigger"));
+    board.addPiece(new Piece(47, 3, h, "trigger"));
+    board.addPiece(new Piece(41, 3, h, "trigger"));
+    board.addPiece(new Piece(56, 2, h, "trigger"));
+    board.addPiece(new Piece(58, 2, v, "trigger"));
+    board.addPiece(new Piece(50, 2, v, "trigger"));
+
+    return board;
+}
+
+
 $(function() {
     document.ontouchmove = function(event) {
         event.preventDefault();
@@ -545,5 +669,9 @@ $(function() {
         randomBoard();
     });
 
-    view.parseHash();
+    $('#loadAndButton').click(() => view.setBoard(andBoard()))
+    $('#loadOrButton').click(() => view.setBoard(orBoard()))
+    $('#loadFinalButton').click(() => view.setBoard(finalBoard()))
+
+    view.setBoard(finalBoard());
 });
