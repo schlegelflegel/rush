@@ -5,6 +5,7 @@
   "main": "app.js",
   "homepage": "schlegelflegel.github.io/rush",
   "scripts": {
+    "dev": "live-server .",
     "build": "mkdir -p ./dist && cp *.js *.html *.css ./dist",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ./dist"
@@ -13,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "gh-pages": "^3.2.3"
+    "gh-pages": "^3.2.3",
+    "live-server": "^1.2.1"
   }
 }
